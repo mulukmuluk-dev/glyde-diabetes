@@ -130,18 +130,6 @@ function Dashboard() {
     <div className="w-full h-screen overflow-hidden flex items-center justify-center p-2 sm:p-4 lg:p-8 relative">
       <main className="w-full max-w-[1380px] h-full bg-glyde-lightBlue/90 backdrop-blur-md p-3 sm:p-5 lg:p-6 flex flex-col lg:flex-row gap-4 relative overflow-hidden rounded-[28px] lg:rounded-[38px] shadow-lg border border-white/50 z-10" data-purpose="dashboard-container">
       
-      {/* Massive Overlay Watermark */}
-      <div className="fixed inset-0 pointer-events-none flex flex-col items-center justify-center z-[100] overflow-hidden opacity-40">
-        <div className="flex flex-col items-center justify-center -rotate-[35deg]">
-          <h1 className="text-[5rem] sm:text-[7rem] lg:text-[10rem] font-black text-slate-800/50 whitespace-nowrap leading-none drop-shadow-md">
-            Z & H For Ever
-          </h1>
-          <h2 className="text-[3rem] sm:text-[4rem] lg:text-[6rem] font-extrabold text-slate-800/50 whitespace-nowrap mt-2 drop-shadow-md">
-            Rp138.000
-          </h2>
-        </div>
-      </div>
-
       {/* BEGIN: Left Sidebar Navigation */}
       <aside className="w-full lg:w-[86px] bg-glyde-sidebar rounded-[24px] lg:rounded-[28px] py-4 px-6 lg:py-6 lg:px-3 flex lg:flex-col items-center justify-between shadow-lg shadow-blue-500/20 shrink-0 z-20" data-purpose="primary-sidebar">
         {/* Brand Logo Wordmark */}

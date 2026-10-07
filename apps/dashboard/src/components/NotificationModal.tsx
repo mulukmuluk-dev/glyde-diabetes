@@ -1,5 +1,5 @@
-import React from 'react';
 import { X, Bell, AlertCircle, TrendingUp, HeartPulse } from 'lucide-react';
+
 
 export default function NotificationModal({ isOpen, onClose }: { isOpen: boolean, onClose: () => void }) {
   if (!isOpen) return null;

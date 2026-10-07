@@ -1,5 +1,5 @@
-import React from 'react';
 import { X, Award, Flame, Target, Star } from 'lucide-react';
+
 
 export default function GamificationModal({ isOpen, onClose }: { isOpen: boolean, onClose: () => void }) {
   if (!isOpen) return null;

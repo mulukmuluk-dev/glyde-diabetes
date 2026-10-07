@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { X, FileText, Download, CheckCircle2 } from 'lucide-react';
+
 
 export default function ReportModal({ isOpen, onClose }: { isOpen: boolean, onClose: () => void }) {
   const [downloading, setDownloading] = useState(false);

@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Camera, MoreVertical, X, Plus } from 'lucide-react';
+import { Camera, MoreVertical, X, Plus, Images, Settings } from 'lucide-react';
 import { supabase } from './lib/supabase';
 import { normalizeInterventionTitle } from './lib/aiService';
 import RiskMappingModal from './components/RiskMappingModal';
@@ -8,6 +8,7 @@ import FoodHistoryModal from './components/FoodHistoryModal';
 import NotificationModal from './components/NotificationModal';
 import GamificationModal from './components/GamificationModal';
 import OnboardingProfileModal from './components/OnboardingProfileModal';
+import ProfileSettingsModal from './components/ProfileSettingsModal';
 import ReportModal from './components/ReportModal';
 
 function Dashboard() {
@@ -23,6 +24,7 @@ function Dashboard() {
   const [isReportOpen, setIsReportOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
+  const [isProfileSettingsOpen, setIsProfileSettingsOpen] = useState(false);
   const [profile, setProfile] = useState<any>(null);
   const [assessment, setAssessment] = useState<any>(null);
   const [loadingData, setLoadingData] = useState(true);
@@ -50,7 +52,9 @@ function Dashboard() {
           setLoadingData(false);
           return;
         }
-        setProfile(profileData);
+        const localLocation = localStorage.getItem(`glyde_user_location_${session.user.id}`);
+        const resolvedLocation = profileData.location || session.user.user_metadata?.location || localLocation || 'Indonesia';
+        setProfile({ ...profileData, location: resolvedLocation });
 
         // Fetch latest assessment
         const { data: assessmentData, error: assessmentError } = await supabase
@@ -164,11 +168,9 @@ function Dashboard() {
               <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z" />
             </svg>
           </a>
-          {/* Analytics (Wired to Food Scan History Gallery) */}
+          {/* Riwayat Foto Makanan & Analisis */}
           <a onClick={(e) => { e.preventDefault(); setIsHistoryModalOpen(true); }} className="w-11 h-11 text-blue-200 hover:text-white hover:bg-white/10 rounded-2xl flex items-center justify-center transition-all cursor-pointer" title="Riwayat Foto Makanan & Analisis">
-            <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="2.2" viewBox="0 0 24 24">
-              <path d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" strokeLinecap="round" strokeLinejoin="round" />
-            </svg>
+            <Images size={20} />
           </a>
           {/* Notifications / Messages with Notification Badge */}
           <a onClick={(e) => { e.preventDefault(); setIsNotifOpen(true); }} className="w-11 h-11 text-blue-200 hover:text-white hover:bg-white/10 rounded-2xl flex items-center justify-center relative transition-all cursor-pointer" title="Peringatan Perilaku">
@@ -244,7 +246,7 @@ function Dashboard() {
               <span className="font-bold text-sm">Dashboard</span>
             </a>
             <a onClick={(e) => { e.preventDefault(); setIsMobileMenuOpen(false); setIsHistoryModalOpen(true); }} className="flex items-center gap-4 text-blue-200 hover:text-white hover:bg-white/10 p-4 rounded-2xl transition-all cursor-pointer">
-              <svg className="w-5 h-5 shrink-0" fill="none" stroke="currentColor" strokeWidth="2.2" viewBox="0 0 24 24"><path d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" strokeLinecap="round" strokeLinejoin="round" /></svg>
+              <Images size={20} className="shrink-0" />
               <span className="font-bold text-sm">Riwayat Foto Makanan</span>
             </a>
 
@@ -310,11 +312,12 @@ function Dashboard() {
               </svg>
               <span className="absolute top-2.5 right-2.5 w-2 h-2 bg-amber-400 rounded-full"></span>
             </button>
-            <button className="w-10 h-10 sm:w-11 sm:h-11 bg-white rounded-2xl shadow-card-soft flex items-center justify-center text-slate-500 hover:text-glyde-primary transition-colors" title="Pengaturan Preferensi">
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
-                <path d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" strokeLinecap="round" strokeLinejoin="round" />
-                <circle cx="12" cy="12" r="3" />
-              </svg>
+            <button 
+              onClick={() => setIsProfileSettingsOpen(true)}
+              className="w-10 h-10 sm:w-11 sm:h-11 bg-white rounded-2xl shadow-card-soft flex items-center justify-center text-slate-500 hover:text-glyde-primary transition-colors cursor-pointer" 
+              title="Pengaturan Profil"
+            >
+              <Settings size={20} />
             </button>
           </div>
         </header>
@@ -598,7 +601,11 @@ function Dashboard() {
             <section className="bg-white rounded-[26px] overflow-hidden shadow-card-soft" data-purpose="user-profile-card">
               <div className="bg-glyde-primary px-5 py-3.5 flex items-center justify-between text-white">
                 <span className="text-xs font-extrabold tracking-wider uppercase">PROFIL SAYA</span>
-                <button className="w-7 h-7 rounded-lg bg-white/20 hover:bg-white/30 flex items-center justify-center transition-colors" title="Edit Profil">
+                <button 
+                  onClick={() => setIsProfileSettingsOpen(true)}
+                  className="w-7 h-7 rounded-lg bg-white/20 hover:bg-white/30 flex items-center justify-center transition-colors cursor-pointer" 
+                  title="Edit Profil"
+                >
                   <svg className="w-3.5 h-3.5 text-white" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
                     <path d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" strokeLinecap="round" strokeLinejoin="round" />
                   </svg>
@@ -631,7 +638,7 @@ function Dashboard() {
                       <svg className="w-3 h-3 text-slate-400 shrink-0" fill="currentColor" viewBox="0 0 20 20">
                         <path clipRule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" fillRule="evenodd" />
                       </svg>
-                      <span>Indonesia</span>
+                      <span>{profile?.location || 'Indonesia'}</span>
                     </p>
                   </div>
                 </div>
@@ -756,6 +763,13 @@ function Dashboard() {
 
       <GamificationModal isOpen={isBadgeOpen} onClose={() => setIsBadgeOpen(false)} />
       <ReportModal isOpen={isReportOpen} onClose={() => setIsReportOpen(false)} />
+      
+      <ProfileSettingsModal 
+        isOpen={isProfileSettingsOpen} 
+        onClose={() => setIsProfileSettingsOpen(false)} 
+        profile={profile}
+        onProfileUpdated={(updatedProfile) => setProfile(updatedProfile)}
+      />
     </div>
   );
 }

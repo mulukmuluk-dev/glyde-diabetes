@@ -53,7 +53,7 @@ export default function RiskMappingModal({ isOpen, onClose, onComplete }: { isOp
               content: `Anda adalah asisten AI kesehatan ahli dari GLYDE. Analisis perilaku pengguna terkait risiko diabetes dan gaya hidup. 
 Berikan skor risiko dari 0 (Sangat Sehat) hingga 100 (Sangat Berisiko). 
 Berikan 3-4 rekomendasi intervensi (kegiatan ringkas) yang spesifik untuk memperbaiki perilaku buruk mereka (contoh: "Air Mineral No-Sugar 2L").
-ANDA WAJIB MERESPONS HANYA DENGAN FORMAT JSON VALID:
+ANDA WAJIB MERESPONS HANYA DENGAN FORMAT json VALID:
 {
   "score": 65,
   "interventions": [
@@ -79,8 +79,9 @@ Riwayat Keluarga Diabetes: ${data.familyHistory}.`
       });
 
       const result = await response.json();
-      if (!result.choices || result.choices.length === 0) {
-        throw new Error("Gagal memproses AI");
+      if (!response.ok || !result.choices || result.choices.length === 0) {
+        console.error("Groq Error Response:", result);
+        throw new Error(result.error?.message || "Gagal memproses AI dari server Groq");
       }
 
       const rawResponse = result.choices[0].message.content;

@@ -108,7 +108,7 @@ function Dashboard() {
                 role: 'system',
                 content: `Anda adalah asisten AI kesehatan. Pengguna ingin menambahkan kegiatan kesehatan khusus (intervensi): "${newPlan}". 
 Tugas Anda adalah merapikan/menstandardisasi bahasanya agar singkat, memotivasi, dan berbentuk target aksi (mirip seperti "Air Mineral 2L" atau "Jalan Kaki 15 Menit").
-RESPONS HANYA BERUPA JSON: { "normalized_title": "Judul Baru" }`
+RESPONS HANYA BERUPA json: { "normalized_title": "Judul Baru" }`
               }
             ],
             temperature: 0.3,

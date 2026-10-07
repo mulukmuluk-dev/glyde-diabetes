@@ -1,16 +1,9 @@
 import { useState, useEffect } from 'react';
 import { X, ArrowRight, Activity, Droplets, Moon, CheckCircle2 } from 'lucide-react';
 import { supabase } from '../lib/supabase';
+import { calculateRiskScore, type AssessmentInput } from '../lib/aiService';
 
-interface AssessmentState {
-  activity: string;
-  sitting: string;
-  sugar: string;
-  sugarExperience?: string;
-  food: string;
-  sleep: string;
-  familyHistory: string;
-}
+interface AssessmentState extends AssessmentInput {}
 
 
 export default function RiskMappingModal({ isOpen, onClose, onComplete }: { isOpen: boolean, onClose: () => void, onComplete?: () => void }) {
@@ -39,55 +32,7 @@ export default function RiskMappingModal({ isOpen, onClose, onComplete }: { isOp
 
   const calculateScoreWithAI = async () => {
     try {
-      const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${import.meta.env.VITE_GROQ_API_KEY || ''}`,
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          model: 'openai/gpt-oss-20b',
-          messages: [
-            {
-              role: 'system',
-              content: `Anda adalah asisten AI kesehatan ahli dari GLYDE. Analisis perilaku pengguna terkait risiko diabetes dan gaya hidup. 
-Berikan skor risiko dari 0 (Sangat Sehat) hingga 100 (Sangat Berisiko). 
-Berikan 3-4 rekomendasi intervensi (kegiatan ringkas) yang spesifik untuk memperbaiki perilaku buruk mereka (contoh: "Air Mineral No-Sugar 2L").
-ANDA WAJIB MERESPONS HANYA DENGAN FORMAT json VALID:
-{
-  "score": 65,
-  "interventions": [
-    { "title": "Jalan Cepat 15 Menit Pagi", "completed": false },
-    { "title": "Ganti Kopi Manis dengan Teh Tawar", "completed": false }
-  ]
-}`
-            },
-            {
-              role: 'user',
-              content: `Tingkat Aktivitas Olahraga: ${data.activity}. 
-Lama Waktu Duduk: ${data.sitting}. 
-Konsumsi Minuman Berpemanis: ${data.sugar}. 
-Pengalaman Konsumsi Gula: ${data.sugarExperience || 'Tidak ada catatan spesifik'}. 
-Pola Makan: ${data.food}. 
-Pola Tidur: ${data.sleep}. 
-Riwayat Keluarga Diabetes: ${data.familyHistory}.`
-            }
-          ],
-          temperature: 0.3,
-          response_format: { type: "json_object" }
-        })
-      });
-
-      const result = await response.json();
-      if (!response.ok || !result.choices || result.choices.length === 0) {
-        console.error("Groq Error Response:", result);
-        throw new Error(result.error?.message || "Gagal memproses AI dari server Groq");
-      }
-
-      const rawResponse = result.choices[0].message.content;
-      const cleanedJSON = rawResponse.replace(/```json/gi, '').replace(/```/g, '').trim();
-      
-      const aiResponse = JSON.parse(cleanedJSON);
+      const aiResponse = await calculateRiskScore(data);
       return aiResponse;
     } catch (err: any) {
       console.error("AI Error:", err);

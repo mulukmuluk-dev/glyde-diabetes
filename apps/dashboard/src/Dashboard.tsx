@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Camera, MoreVertical, X, Plus } from 'lucide-react';
 import { supabase } from './lib/supabase';
+import { normalizeInterventionTitle } from './lib/aiService';
 import RiskMappingModal from './components/RiskMappingModal';
 import FoodScannerModal from './components/FoodScannerModal';
 import FoodHistoryModal from './components/FoodHistoryModal';
@@ -92,40 +93,7 @@ function Dashboard() {
       const { data: { session } } = await supabase.auth.getSession();
       if (!session) return;
       
-      let finalTitle = newPlan;
-      try {
-        // Analyze with AI
-        const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
-          method: 'POST',
-          headers: {
-            'Authorization': `Bearer ${import.meta.env.VITE_GROQ_API_KEY || ''}`,
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({
-            model: 'openai/gpt-oss-20b',
-            messages: [
-              {
-                role: 'system',
-                content: `Anda adalah asisten AI kesehatan. Pengguna ingin menambahkan kegiatan kesehatan khusus (intervensi): "${newPlan}". 
-Tugas Anda adalah merapikan/menstandardisasi bahasanya agar singkat, memotivasi, dan berbentuk target aksi (mirip seperti "Air Mineral 2L" atau "Jalan Kaki 15 Menit").
-RESPONS HANYA BERUPA json: { "normalized_title": "Judul Baru" }`
-              }
-            ],
-            temperature: 0.3,
-            response_format: { type: "json_object" }
-          })
-        });
-
-        const result = await response.json();
-        if (result.choices && result.choices.length > 0) {
-          const rawResponse = result.choices[0].message.content;
-          const cleanedJSON = rawResponse.replace(/```json/gi, '').replace(/```/g, '').trim();
-          const aiResponse = JSON.parse(cleanedJSON);
-          finalTitle = aiResponse.normalized_title || newPlan;
-        }
-      } catch (aiErr) {
-        console.error("AI Error for custom plan:", aiErr);
-      }
+      const finalTitle = await normalizeInterventionTitle(newPlan);
 
       const plan = { user_id: session.user.id, title: finalTitle, completed: false };
       const { data, error } = await supabase.from('custom_interventions').insert([plan]).select().single();

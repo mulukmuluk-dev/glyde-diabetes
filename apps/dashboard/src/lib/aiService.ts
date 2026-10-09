@@ -27,50 +27,59 @@ export interface RiskAssessmentResult {
 
 /**
  * Clinical heuristic fallback when all cloud AI endpoints are unreachable.
- * Ensures users are NEVER blocked or face broken UI.
+ * Berlandaskan Standar Skrining Faktor Risiko PTM & GERMAS Kementerian Kesehatan RI (Kemenkes).
  */
 export function calculateLocalRisk(data: AssessmentInput): RiskAssessmentResult {
-  let score = 25;
+  let score = 20;
 
-  // Sugar intake
-  if (data.sugar.includes('Setiap hari') || data.sugar.includes('Lebih dari 4')) score += 30;
-  else if (data.sugar.includes('3-4')) score += 20;
-  else if (data.sugar.includes('1-2')) score += 10;
+  // 1. Konsumsi Gula (Permenkes No. 30/2013: Batas 50g / 4 sdm per hari)
+  if (data.sugar.includes('Setiap hari (> 1 kali)')) score += 32;
+  else if (data.sugar.includes('Setiap hari (1 kali)')) score += 24;
+  else if (data.sugar.includes('3-4 kali')) score += 15;
+  else if (data.sugar.includes('Jarang')) score += 5;
 
-  // Family history
-  if (data.familyHistory === 'Ya, Ada') score += 20;
+  // 2. Aktivitas Fisik (GERMAS Kemenkes: Min. 150 menit/minggu atau 30 menit/hari)
+  if (data.activity.includes('Tidak pernah')) score += 20;
+  else if (data.activity.includes('1-2')) score += 10;
+  else if (data.activity.includes('3-4')) score -= 5;
+  else if (data.activity.includes('Lebih')) score -= 12;
 
-  // Sitting duration
+  // 3. Waktu Duduk / Sedentari (Pedoman Kemenkes: Batasi duduk statis > 6-8 jam)
   if (data.sitting.includes('> 8') || data.sitting.includes('Lebih')) score += 15;
   else if (data.sitting.includes('4 - 8') || data.sitting.includes('4-8')) score += 8;
 
-  // Activity
-  if (data.activity.includes('Tidak pernah') || data.activity.includes('Jarang')) score += 15;
-  else if (data.activity.includes('1-2')) score += 8;
-  else if (data.activity.includes('3-4') || data.activity.includes('3-5') || data.activity.includes('Setiap')) score -= 10;
+  // 4. Pola Makan ("Isi Piringku" Gizi Seimbang Kemenkes)
+  if (data.food.includes('Banyak gorengan') || data.food.includes('cepat saji')) score += 12;
+  else if (data.food.includes('Kombinasi')) score += 4;
+  else if (data.food.includes('Sehat') || data.food.includes('Piringku')) score -= 8;
 
-  // Sleep
-  if (data.sleep.includes('< 6') || data.sleep.includes('Kurang')) score += 10;
+  // 5. Pola Tidur / Istirahat (Pilar CERDIK: Istirahat cukup 7-8 jam)
+  if (data.sleep.includes('< 5') || data.sleep.includes('Kurang')) score += 12;
+  else if (data.sleep.includes('5 - 6')) score += 6;
 
-  score = Math.min(Math.max(score, 12), 94);
+  // 6. Riwayat Keluarga Diabetes (Skrining Risiko Genetik PTM Kemenkes)
+  if (data.familyHistory === 'Ya, Ada') score += 18;
 
+  score = Math.min(Math.max(score, 10), 95);
+
+  // Rekomendasi intervensi berbasis pilar CERDIK & GERMAS Kemenkes RI
   const interventions: InterventionItem[] = [
-    { title: "Ganti Minuman Manis dengan Air Putih / Teh Tawar", completed: false },
-    { title: "Jalan Santai 15-20 Menit Pasca Makan Siang/Malam", completed: false },
+    { title: "Batasi Gula Maks. 4 Sdm/Hari (Permenkes 30/2013)", completed: false },
+    { title: "Aktivitas Fisik Rutin 30 Menit/Hari (GERMAS Kemenkes)", completed: false },
     { title: "Lakukan Peregangan 2-3 Menit Setiap 60 Menit Duduk", completed: false }
   ];
 
   if (data.familyHistory === 'Ya, Ada') {
-    interventions.push({ title: "Cek Gula Darah Puasa Secara Berkala", completed: false });
+    interventions.push({ title: "Skrining Gula Darah Puasa Berkala di Faskes/Posbindu", completed: false });
   } else {
-    interventions.push({ title: "Tidur Teratur Minimal 7 Jam Setiap Malam", completed: false });
+    interventions.push({ title: "Istirahat Cukup 7-8 Jam Teratur (Pilar CERDIK)", completed: false });
   }
 
   return { score, interventions, provider: 'heuristic' };
 }
 
 /**
- * Helper to call Groq for risk calculation
+ * Helper to call Groq for risk calculation (Standar Kemenkes RI)
  */
 async function callGroqAssessment(data: AssessmentInput): Promise<RiskAssessmentResult> {
   const groqKey = GROQ_API_KEY;
@@ -87,15 +96,16 @@ async function callGroqAssessment(data: AssessmentInput): Promise<RiskAssessment
       messages: [
         {
           role: 'system',
-          content: `Anda adalah asisten AI kesehatan ahli dari GLYDE. Analisis perilaku pengguna terkait risiko diabetes dan gaya hidup. 
-Berikan skor risiko dari 0 (Sangat Sehat) hingga 100 (Sangat Berisiko). 
-Berikan 3-4 rekomendasi intervensi (kegiatan ringkas) yang spesifik untuk memperbaiki perilaku buruk mereka dalam Bahasa Indonesia (contoh: "Air Mineral No-Sugar 2L").
-ANDA WAJIB MERESPONS HANYA DENGAN FORMAT json VALID:
+          content: `Anda adalah asisten AI kesehatan ahli dari GLYDE. Analisis perilaku pengguna terkait risiko diabetes berlandaskan pedoman pengendalian Penyakit Tidak Menular (PTM) Kementerian Kesehatan Republik Indonesia (Kemenkes RI), Permenkes No. 30/2013 (batas gula maks 4 sdm/50g per hari), serta panduan GERMAS dan CERDIK.
+Berikan skor risiko perilaku dari 0 (Sangat Rendah/Sehat Sesuai Kemenkes) hingga 100 (Sangat Berisiko).
+Kategori Kemenkes RI: <40 Risiko Rendah, 40-69 Risiko Sedang, >=70 Risiko Tinggi.
+Berikan 3-4 rekomendasi intervensi (kegiatan ringkas berlandaskan pilar CERDIK Kemenkes) dalam Bahasa Indonesia (contoh: "Air Mineral No-Sugar (Batas Gula Kemenkes)", "Jalan Kaki 30 Menit GERMAS").
+ANDA WAJIB MERESPONS HANYA DENGAN FORMAT JSON VALID:
 {
-  "score": 65,
+  "score": 60,
   "interventions": [
-    { "title": "Jalan Cepat 15 Menit Pagi", "completed": false },
-    { "title": "Ganti Kopi Manis dengan Teh Tawar", "completed": false }
+    { "title": "Batasi Gula Maks. 4 Sdm/Hari (Kemenkes)", "completed": false },
+    { "title": "Jalan Kaki 30 Menit/Hari (GERMAS)", "completed": false }
   ]
 }`
         },
@@ -132,7 +142,7 @@ Riwayat Keluarga Diabetes: ${data.familyHistory}.`
 }
 
 /**
- * Helper to call Gemini for risk calculation
+ * Helper to call Gemini for risk calculation (Standar Kemenkes RI)
  */
 async function callGeminiAssessment(data: AssessmentInput): Promise<RiskAssessmentResult> {
   const geminiKey = GEMINI_API_KEY;
@@ -147,7 +157,7 @@ async function callGeminiAssessment(data: AssessmentInput): Promise<RiskAssessme
     'gemini-flash-lite-latest'
   ];
 
-  const prompt = `Anda adalah asisten AI kesehatan ahli dari GLYDE. Analisis perilaku pengguna terkait risiko diabetes dan gaya hidup:
+  const prompt = `Anda adalah asisten AI kesehatan ahli dari GLYDE. Analisis perilaku pengguna terkait risiko diabetes berlandaskan pedoman pengendalian Penyakit Tidak Menular (PTM) Kementerian Kesehatan Republik Indonesia (Kemenkes RI), Permenkes No. 30/2013 (batas gula maks 4 sdm/50g per hari), serta panduan GERMAS dan CERDIK:
 Tingkat Aktivitas Olahraga: ${data.activity}.
 Lama Waktu Duduk: ${data.sitting}.
 Konsumsi Minuman Berpemanis: ${data.sugar}.
@@ -156,14 +166,15 @@ Pola Makan: ${data.food}.
 Pola Tidur: ${data.sleep}.
 Riwayat Keluarga Diabetes: ${data.familyHistory}.
 
-Berikan skor risiko dari 0 (Sangat Sehat) hingga 100 (Sangat Berisiko).
-Berikan 3-4 rekomendasi intervensi (kegiatan ringkas dalam Bahasa Indonesia).
+Berikan skor risiko perilaku dari 0 (Sangat Rendah/Sehat Sesuai Kemenkes) hingga 100 (Sangat Berisiko).
+Kategori Kemenkes RI: <40 Risiko Rendah, 40-69 Risiko Sedang, >=70 Risiko Tinggi.
+Berikan 3-4 rekomendasi intervensi (kegiatan ringkas berlandaskan pilar CERDIK Kemenkes dalam Bahasa Indonesia).
 Format respons WAJIB JSON:
 {
-  "score": 65,
+  "score": 60,
   "interventions": [
-    { "title": "Jalan Cepat 15 Menit Pagi", "completed": false },
-    { "title": "Ganti Kopi Manis dengan Teh Tawar", "completed": false }
+    { "title": "Batasi Gula Maks. 4 Sdm/Hari (Kemenkes)", "completed": false },
+    { "title": "Jalan Kaki 30 Menit/Hari (GERMAS)", "completed": false }
   ]
 }`;
 

@@ -184,7 +184,7 @@ export default function FoodHistoryModal({ isOpen, onClose, onOpenScanner }: { i
                   <p><strong className="text-slate-700">1. Peringatan Lonjakan Gula:</strong> {selectedScan.spike_warning}</p>
                   <p><strong className="text-slate-700">2. Batas Porsi Disarankan:</strong> {selectedScan.portion_advice}</p>
                   <p><strong className="text-slate-700">3. Komposisi:</strong> {Array.isArray(selectedScan.ingredients) ? selectedScan.ingredients.join(', ') : 'Tercatat'}</p>
-                  <p><strong className="text-slate-700">4. Rekomendasi Dokter & Diet:</strong> {selectedScan.recommendation}</p>
+                  <p><strong className="text-slate-700">4. Rekomendasi Diet:</strong> {selectedScan.recommendation}</p>
                 </div>
               </div>
             </div>

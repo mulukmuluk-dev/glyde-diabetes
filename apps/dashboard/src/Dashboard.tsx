@@ -433,10 +433,10 @@ function Dashboard() {
                 </div>
               </article>
 
-              {/* Metric 3: Skor Risiko Perilaku */}
+              {/* Metric 3: Skor Risiko Perilaku (Kemenkes RI) */}
               <article className="bg-white rounded-[24px] p-4 sm:p-5 shadow-card-soft flex flex-col justify-between relative">
                 <div className="flex items-center justify-between mb-2">
-                  <span className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider">Skor Risiko Perilaku</span>
+                  <span className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider">Skor Risiko Perilaku (Kemenkes)</span>
                   <button aria-label="Menu Opsi" className="text-slate-300 hover:text-slate-500">
                     <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><circle cx="5" cy="10" r="1.5" /><circle cx="10" cy="10" r="1.5" /><circle cx="15" cy="10" r="1.5" /></svg>
                   </button>
@@ -459,7 +459,7 @@ function Dashboard() {
                   <span className={`inline-flex items-center text-[10px] font-semibold ${riskText} ${riskBg} px-2 py-0.5 rounded-full`}>
                     {riskLabel}
                   </span>
-                  <span className="text-[10px] text-slate-400">Perlu Pantau</span>
+                  <span className="text-[10px] text-slate-400 font-medium">Standar Kemenkes RI</span>
                 </div>
               </article>
             </div>
@@ -470,7 +470,7 @@ function Dashboard() {
               {/* Card 1: Multi-colored Donut Behavior Ring */}
               <article className="bg-white rounded-[26px] p-5 sm:p-6 shadow-card-soft flex flex-col justify-between" data-purpose="behavior-donut-score">
                 <div className="flex items-center justify-between mb-2">
-                  <h3 className="text-xs font-bold text-slate-500 uppercase tracking-wider">Skor Risiko Perilaku</h3>
+                  <h3 className="text-xs font-bold text-slate-500 uppercase tracking-wider">Skor Risiko Perilaku (Kemenkes RI)</h3>
                   <select className="bg-blue-50 text-glyde-primary border-none rounded-full px-2.5 py-1 text-[11px] font-semibold cursor-pointer outline-none">
                     <option>Hari Ini</option>
                     <option>7 Hari Terakhir</option>
@@ -487,28 +487,28 @@ function Dashboard() {
                     </svg>
                     <div className="absolute inset-0 flex flex-col items-center justify-center text-center">
                       <span className="text-2xl font-black text-slate-800 tracking-tight leading-none">{riskScore}<span className="text-sm font-semibold">%</span></span>
-                      <span className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider mt-1">Tingkat Risiko</span>
+                      <span className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider mt-1">Standar Kemenkes</span>
                     </div>
                   </div>
                   <div className="flex flex-col gap-2.5 text-xs flex-1 pl-2">
                     <div className="flex items-start justify-between border-b border-slate-50 pb-1.5">
                       <div>
                         <div className="font-extrabold text-slate-800 text-sm">{breakdownSugar}%</div>
-                        <div className="text-[11px] text-slate-400">Minuman Gula (SSBs)</div>
+                        <div className="text-[11px] text-slate-400">Minuman Gula (Batas Kemenkes)</div>
                       </div>
                       <span className="w-2.5 h-2.5 rounded-full bg-rose-500 mt-1"></span>
                     </div>
                     <div className="flex items-start justify-between border-b border-slate-50 pb-1.5">
                       <div>
                         <div className="font-extrabold text-slate-800 text-sm">{breakdownActivity}%</div>
-                        <div className="text-[11px] text-slate-400">Aktivitas Rendah</div>
+                        <div className="text-[11px] text-slate-400">Aktivitas Fisik (GERMAS)</div>
                       </div>
                       <span className="w-2.5 h-2.5 rounded-full bg-amber-400 mt-1"></span>
                     </div>
                     <div className="flex items-start justify-between">
                       <div>
                         <div className="font-extrabold text-slate-800 text-sm">{breakdownSleep}%</div>
-                        <div className="text-[11px] text-slate-400">Pola Tidur & Stres</div>
+                        <div className="text-[11px] text-slate-400">Pola Tidur & CERDIK</div>
                       </div>
                       <span className="w-2.5 h-2.5 rounded-full bg-indigo-600 mt-1"></span>
                     </div>
@@ -520,7 +520,7 @@ function Dashboard() {
                     <span className="font-semibold text-glyde-primary cursor-pointer hover:underline shrink-0">Detail</span>
                   </span>
                   <button onClick={() => setIsRiskModalOpen(true)} className="w-full bg-blue-50 hover:bg-blue-100 text-glyde-primary font-bold py-2 rounded-lg transition-colors">
-                    Asesmen Ulang Perilaku
+                    Asesmen Ulang (Standar Kemenkes)
                   </button>
                 </p>
               </article>
@@ -747,10 +747,10 @@ function Dashboard() {
         onClose={() => setIsHistoryModalOpen(false)} 
         onOpenScanner={() => { setIsHistoryModalOpen(false); setIsScannerOpen(true); }}
       />
-      <NotificationModal isOpen={isNotifOpen} onClose={() => setIsNotifOpen(false)} />
+      <NotificationModal isOpen={isNotifOpen} onClose={() => setIsNotifOpen(false)} userName={profile?.name || 'Pengguna'} />
 
       <GamificationModal isOpen={isBadgeOpen} onClose={() => setIsBadgeOpen(false)} />
-      <ReportModal isOpen={isReportOpen} onClose={() => setIsReportOpen(false)} />
+      <ReportModal isOpen={isReportOpen} onClose={() => setIsReportOpen(false)} userName={profile?.name || 'Pengguna'} />
       
       <ProfileSettingsModal 
         isOpen={isProfileSettingsOpen} 

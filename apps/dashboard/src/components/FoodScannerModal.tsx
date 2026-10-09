@@ -447,7 +447,7 @@ export default function FoodScannerModal({ isOpen, onClose, onScanComplete }: Fo
                   </div>
 
                   <div>
-                    <span className="text-slate-500 font-medium block mb-1">6. Rekomendasi Dokter & Diet:</span>
+                    <span className="text-slate-500 font-medium block mb-1">6. Rekomendasi Diet:</span>
                     <p className="bg-slate-50 p-2.5 rounded-xl text-slate-700 font-medium leading-relaxed">
                       {analysisResult.recommendation}
                     </p>

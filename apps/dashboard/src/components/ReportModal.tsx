@@ -2,11 +2,21 @@ import { useState } from 'react';
 import { X, FileText, Download, CheckCircle2 } from 'lucide-react';
 
 
-export default function ReportModal({ isOpen, onClose }: { isOpen: boolean, onClose: () => void }) {
+export default function ReportModal({ 
+  isOpen, 
+  onClose,
+  userName = 'Pengguna'
+}: { 
+  isOpen: boolean; 
+  onClose: () => void;
+  userName?: string;
+}) {
   const [downloading, setDownloading] = useState(false);
   const [done, setDone] = useState(false);
 
   if (!isOpen) return null;
+
+  const displayName = userName?.trim() || 'Pengguna';
 
   const handleDownload = () => {
     setDownloading(true);
@@ -48,7 +58,7 @@ export default function ReportModal({ isOpen, onClose }: { isOpen: boolean, onCl
               </div>
               
               <div>
-                <p className="text-xs font-semibold text-slate-600">Patient: <span className="font-bold text-slate-800">dr. Alisha Nicholls</span></p>
+                <p className="text-xs font-semibold text-slate-600">Patient: <span className="font-bold text-slate-800">{displayName}</span></p>
                 <p className="text-xs font-semibold text-slate-600">Behavioral Risk Score: <span className="font-bold text-amber-600">58/100 (Moderate)</span></p>
               </div>
               

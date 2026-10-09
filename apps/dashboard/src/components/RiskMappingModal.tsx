@@ -88,8 +88,8 @@ export default function RiskMappingModal({ isOpen, onClose, onComplete }: { isOp
         {/* Header */}
         <div className="flex items-center justify-between p-5 sm:p-6 border-b border-slate-100 shrink-0">
           <div>
-            <h2 className="font-extrabold text-slate-800 text-lg sm:text-xl">Pemetaan Risiko Perilaku</h2>
-            {!isCompleted && <p className="text-sm font-medium text-slate-400">Langkah {step} dari 3</p>}
+            <h2 className="font-extrabold text-slate-800 text-lg sm:text-xl">Pemetaan Risiko Perilaku (Kemenkes RI)</h2>
+            {!isCompleted && <p className="text-xs font-semibold text-sky-600 mt-0.5">Langkah {step} dari 3 • Standar Skrining PTM & GERMAS</p>}
           </div>
           <button onClick={onClose} className="p-2 text-slate-400 hover:text-slate-600 bg-slate-50 rounded-full transition-colors">
             <X size={20} />
@@ -119,8 +119,8 @@ export default function RiskMappingModal({ isOpen, onClose, onComplete }: { isOp
               <div className="w-20 h-20 bg-emerald-100 rounded-full flex items-center justify-center mb-6 shadow-inner">
                 <CheckCircle2 size={40} className="text-emerald-500" />
               </div>
-              <h3 className="text-2xl font-black text-slate-800 mb-2">Analisis Selesai!</h3>
-              <p className="text-slate-500 font-medium mb-8 max-w-sm">Skor perilaku Anda telah dihitung dan rencana intervensi personal sudah disiapkan di dashboard utama.</p>
+              <h3 className="text-2xl font-black text-slate-800 mb-2">Asesmen Kemenkes Selesai!</h3>
+              <p className="text-slate-500 font-medium mb-8 max-w-sm">Skor risiko perilaku Anda telah dihitung berlandaskan pedoman Penyakit Tidak Menular (PTM) & CERDIK Kemenkes RI. Rencana intervensi telah disiapkan di dashboard.</p>
               
               <button 
                 onClick={onClose}
@@ -133,9 +133,12 @@ export default function RiskMappingModal({ isOpen, onClose, onComplete }: { isOp
             <div className="min-h-[250px]">
               {step === 1 && (
                 <div className="animate-in slide-in-from-right-4 duration-300">
-                  <div className="flex items-center gap-3 mb-6">
+                  <div className="flex items-center gap-3 mb-4">
                     <div className="p-2.5 bg-blue-50 text-blue-500 rounded-xl"><Activity size={24} /></div>
-                    <h3 className="text-lg font-bold text-slate-700">Aktivitas Fisik & Gerak</h3>
+                    <div>
+                      <h3 className="text-base font-bold text-slate-700">Aktivitas Fisik (GERMAS Kemenkes)</h3>
+                      <p className="text-xs text-slate-400">Anjuran Kemenkes: Minimal 150 menit/minggu (30 menit/hari)</p>
+                    </div>
                   </div>
                   
                   <div className="space-y-4">
@@ -150,7 +153,7 @@ export default function RiskMappingModal({ isOpen, onClose, onComplete }: { isOp
                     </label>
 
                     <label className="block">
-                      <span className="text-sm font-semibold text-slate-700 mb-2 block">Rata-rata waktu duduk Anda dalam sehari?</span>
+                      <span className="text-sm font-semibold text-slate-700 mb-2 block">Rata-rata waktu duduk / sedentari dalam sehari?</span>
                       <select value={data.sitting} onChange={e => setData({...data, sitting: e.target.value})} className="w-full bg-slate-50 border-transparent focus:border-glyde-primary focus:ring-2 focus:ring-blue-100 rounded-xl p-3 text-sm font-medium">
                         <option>Kurang dari 4 jam</option>
                         <option>4 - 8 jam</option>
@@ -163,14 +166,17 @@ export default function RiskMappingModal({ isOpen, onClose, onComplete }: { isOp
 
               {step === 2 && (
                 <div className="animate-in slide-in-from-right-4 duration-300">
-                  <div className="flex items-center gap-3 mb-6">
+                  <div className="flex items-center gap-3 mb-4">
                     <div className="p-2.5 bg-rose-50 text-rose-500 rounded-xl"><Droplets size={24} /></div>
-                    <h3 className="text-lg font-bold text-slate-700">Konsumsi Gula & Makanan</h3>
+                    <div>
+                      <h3 className="text-base font-bold text-slate-700">Konsumsi Gula (Permenkes No. 30/2013)</h3>
+                      <p className="text-xs text-slate-400">Batas Kemenkes RI: Maksimal 4 sdm (50 gram) gula per hari</p>
+                    </div>
                   </div>
                   
                   <div className="space-y-4">
                     <label className="block">
-                      <span className="text-sm font-semibold text-slate-700 mb-2 block">Seberapa sering mengonsumsi Minuman Berpemanis?</span>
+                      <span className="text-sm font-semibold text-slate-700 mb-2 block">Seberapa sering mengonsumsi Minuman Berpemanis (SSBs)?</span>
                       <select value={data.sugar} onChange={e => setData({...data, sugar: e.target.value})} className="w-full bg-slate-50 border-transparent focus:border-glyde-primary focus:ring-2 focus:ring-blue-100 rounded-xl p-3 text-sm font-medium">
                         <option>Setiap hari (&gt; 1 kali)</option>
                         <option>Setiap hari (1 kali)</option>
@@ -180,7 +186,7 @@ export default function RiskMappingModal({ isOpen, onClose, onComplete }: { isOp
                     </label>
 
                     <label className="block">
-                      <span className="text-sm font-semibold text-slate-700 mb-2 block">Kecenderungan pola makan Anda?</span>
+                      <span className="text-sm font-semibold text-slate-700 mb-2 block">Kecenderungan pola makan Anda (Panduan "Isi Piringku")?</span>
                       <select value={data.food} onChange={e => setData({...data, food: e.target.value})} className="w-full bg-slate-50 border-transparent focus:border-glyde-primary focus:ring-2 focus:ring-blue-100 rounded-xl p-3 text-sm font-medium">
                         <option>Banyak gorengan / Makanan cepat saji</option>
                         <option>Kombinasi (sesekali sayur/buah)</option>
@@ -203,9 +209,12 @@ export default function RiskMappingModal({ isOpen, onClose, onComplete }: { isOp
 
               {step === 3 && (
                 <div className="animate-in slide-in-from-right-4 duration-300">
-                  <div className="flex items-center gap-3 mb-6">
+                  <div className="flex items-center gap-3 mb-4">
                     <div className="p-2.5 bg-indigo-50 text-indigo-500 rounded-xl"><Moon size={24} /></div>
-                    <h3 className="text-lg font-bold text-slate-700">Pola Tidur & Keturunan</h3>
+                    <div>
+                      <h3 className="text-base font-bold text-slate-700">Pola Istirahat & Riwayat (CERDIK)</h3>
+                      <p className="text-xs text-slate-400">Pilar CERDIK: Istirahat cukup 7-8 jam & deteksi dini faktor risiko</p>
+                    </div>
                   </div>
                   
                   <div className="space-y-4">
@@ -220,7 +229,7 @@ export default function RiskMappingModal({ isOpen, onClose, onComplete }: { isOp
                     </label>
 
                     <label className="block">
-                      <span className="text-sm font-semibold text-slate-700 mb-2 block">Apakah ada riwayat keluarga inti dengan Diabetes?</span>
+                      <span className="text-sm font-semibold text-slate-700 mb-2 block">Apakah ada riwayat keluarga inti dengan Diabetes Melitus?</span>
                       <div className="flex gap-4">
                         <label className="flex-1 flex items-center gap-2 p-3 border border-slate-200 rounded-xl bg-slate-50 cursor-pointer">
                           <input type="radio" checked={data.familyHistory === 'Ya, Ada'} onChange={() => setData({...data, familyHistory: 'Ya, Ada'})} name="family_history" className="text-glyde-primary focus:ring-glyde-primary" />

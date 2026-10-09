@@ -1,8 +1,18 @@
 import { X, Bell, AlertCircle, TrendingUp, HeartPulse } from 'lucide-react';
 
 
-export default function NotificationModal({ isOpen, onClose }: { isOpen: boolean, onClose: () => void }) {
+export default function NotificationModal({ 
+  isOpen, 
+  onClose,
+  userName = 'Pengguna'
+}: { 
+  isOpen: boolean; 
+  onClose: () => void;
+  userName?: string;
+}) {
   if (!isOpen) return null;
+
+  const displayName = userName?.trim() || 'Pengguna';
 
   const notifications = [
     {
@@ -10,7 +20,7 @@ export default function NotificationModal({ isOpen, onClose }: { isOpen: boolean
       type: 'warning',
       icon: <AlertCircle size={20} className="text-amber-500" />,
       title: 'Move Challenge: Sedentari Terlalu Lama!',
-      message: 'dr. Nicholls, Anda sudah duduk selama 3 jam berturut-turut. Ayo berdiri dan lakukan peregangan selama 5 menit.',
+      message: `${displayName}, Anda sudah duduk selama 3 jam berturut-turut. Ayo berdiri dan lakukan peregangan selama 5 menit.`,
       time: '10 menit yang lalu',
       bg: 'bg-amber-50',
     },
@@ -19,7 +29,7 @@ export default function NotificationModal({ isOpen, onClose }: { isOpen: boolean
       type: 'success',
       icon: <TrendingUp size={20} className="text-emerald-500" />,
       title: 'Progress Skor Membaik',
-      message: 'Hebat! Skor risiko perilaku Anda turun 5 poin minggu ini karena Anda berhasil menekan konsumsi gula harian.',
+      message: 'Hebat! Skor risiko perilaku Kemenkes Anda membaik minggu ini karena Anda berhasil menekan konsumsi gula harian.',
       time: '2 jam yang lalu',
       bg: 'bg-emerald-50',
     },

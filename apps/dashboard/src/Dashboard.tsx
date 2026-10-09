@@ -487,7 +487,7 @@ function Dashboard() {
                     </svg>
                     <div className="absolute inset-0 flex flex-col items-center justify-center text-center">
                       <span className="text-2xl font-black text-slate-800 tracking-tight leading-none">{riskScore}<span className="text-sm font-semibold">%</span></span>
-                      <span className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider mt-1">Standar Kemenkes</span>
+                      <span className="text-[7.5px] font-bold text-slate-400 uppercase tracking-tight mt-0.5 leading-none">Standar Kemenkes</span>
                     </div>
                   </div>
                   <div className="flex flex-col gap-2.5 text-xs flex-1 pl-2">
